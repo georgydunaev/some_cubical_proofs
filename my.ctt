@@ -1,0 +1,69 @@
+module my where
+idfunc (A : U) (a : A) : A = a
+data bool = false
+          | true
+
+not : bool -> bool = split
+  false -> true
+  true  -> false
+
+Path (A : U) (a b : A) : U = PathP (<i> A) a b
+
+{- happly -}
+thm00 (A B : U) (a : A) (f g : A -> B) (pAtoB : Path (A -> B) f g) : Path B (f a) (g a) =
+ <i> ((pAtoB @ i) a) 
+
+{- ap -}
+thm01 (A B : U) (a b: A) (f : A -> B) (pA : Path A a b) : Path B (f a) (f b) =
+ <i> (f (pA @ i))
+ 
+{- Funext -}
+thm02 (A B : U) (f g: A -> B) (paB : (a : A) -> Path B (f a) (g a)) : Path (A->B) f g =
+ <i> \(a : A) -> ((paB a) @ i)
+
+{- trivial -}
+thm03 (A B : U) (f: A -> B) : Path (A->B) f f  = 
+ <i> f 
+ 
+
+lem00 (A : U) (a b : A): A = comp (<j>A) a [ ] 
+
+lem01 (A : U) (a b : A) : (Path A a a) = <i> comp (<j>A) a [ (i=1) -> <k>a, (i=0) -> <k>a ] 
+
+lem02 (A : U) (a b : A) (p : Path A a b) : (Path A a b) = 
+ <i> comp (<j>A) a [ (i=0) -> <k>a , (i=1) -> p ] 
+
+lem03 (A : U) (a b c : A) (p1 : Path A a b) (p2 : Path A b c) : Path A a c =
+ <i> comp (<j>A) (p1 @ i) [ (i=0) -> (<k>a) , (i=1) -> p2 ] 
+
+{- good -}
+lem04 (A : U) (a b c d : A) (p1 : Path A a b) (p2 : Path A b c) (p3 : Path A a d) : Path A d c =
+ <i> comp (<j>A) (p1 @ i) [ (i=0) -> p3 , (i=1) -> p2 ] 
+ 
+{-
+
+lem05 (A : U) (P : A -> U ) (f : (q : A) -> P q ) (a b : A) (p1 : Path A a b) (p2 : Path A (f a) (f b))
+ : PathP (<j>(P (p1 @ j))) (f a) (f b) =
+ <i> comp (<j>(P (p1 @ j))) (p2 @ i) [ (i=0) -> (f a) , (i=1) -> (f b) ] 
+ 
+  <k>
+JEq (A : U) (a : A) (C : (x : A) -> Path A a x -> U) (d : C a (refl A a))
+  : Path (C a (refl A a)) d (J A a C d a (refl A a)) =
+  substEq (singl A a) T (a, refl A a) d
+    where T (z : singl A a) : U = C (z.1) (z.2)
+
+ 
+lem04 (A : U) (a b c : A) (p1 : Path A a b) (p2 : Path A b c) : A =
+ comp (<j>A) (p1 @ 0) [ ]
+
+lem05 (A : U) (a b c : A) (p1 : Path A a b) (p2 : Path A b c) : A =
+ comp (<j>A) (p1 @ 1) [ ]  
+
+ lem01 (A : U) (a b : A) : (Path A a b) = <i> comp (<j>A) a [ (i=1) -> <k>b, (i=0) -> <k>a ] 
+lem00 (A : U) (a b : A): A = comp (<i>A) a [ (i=1) -> b, (i=0) -> a ] 
+
+thm04 (A : U) (a b c : A) (p1 : Path A a b) (p2 : Path A b c) : Path A a c =
+ <i> p1 @ -i 
+ 
+ 
+\(f : A->B) -> (f ) -}
